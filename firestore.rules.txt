@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /usernames/{username} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /users/{email} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    match /{col}/{doc} {
+      allow read, write: if request.auth != null && col in ['orders','drivers','clients','contracts','pricing','cod_settlements','payroll','fleet','settings'];
+    }
+  }
+}

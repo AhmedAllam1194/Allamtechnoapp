@@ -1,0 +1,48 @@
+<!doctype html><html lang="ar" dir="rtl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>زرع بيانات تجريبية | ATD</title>
+<style>body{font-family:system-ui,Segoe UI,Roboto;max-width:800px;margin:30px auto;padding:16px}button{padding:10px 14px;border-radius:10px;border:1px solid #cbd5e1;cursor:pointer}</style>
+<script src="config.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const app = initializeApp(window.AT_FIREBASE_CONFIG);
+const db = getFirestore(app);
+
+async function seed(){
+  const uname = document.getElementById('u').value.trim();
+  const email = document.getElementById('e').value.trim();
+  const pass = document.getElementById('p').value.trim();
+  const role = document.getElementById('r').value;
+  if(!uname||!email||!pass){ alert('املأ الحقول'); return; }
+
+  await setDoc(doc(db,'usernames', uname), { email, role });
+  await setDoc(doc(db,'users', email), { username: uname, email, role });
+
+  await setDoc(doc(db,'orders','A-101'), { status:'pending', vehicle:'bike', amount:1.5, customer:'يوسف', driver:'سالم', lat:29.3759, lng:47.9774 });
+  await setDoc(doc(db,'orders','A-102'), { status:'delivered', vehicle:'car', amount:2.2, customer:'مي', driver:'علي', lat:29.337, lng:48.028 });
+  await setDoc(doc(db,'orders','A-103'), { status:'issue', vehicle:'car', amount:0.7, customer:'محمد', driver:'سعيد', lat:29.31, lng:47.94 });
+  await setDoc(doc(db,'orders','A-104'), { status:'pending', vehicle:'bike', amount:1.1, customer:'سارة', driver:'حسين', lat:29.28, lng:47.98 });
+
+  alert('تم الزرع. تذكير: أنشئ المستخدم في Authentication يدويًا بنفس البريد وكلمة السر قبل تسجيل الدخول.');
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('seed').onclick = seed;
+});
+</script>
+</head><body>
+<h2>زرع بيانات تجريبية (مطور)</h2>
+<p>قبل الزرع: أنشئ المستخدم في <b>Authentication</b> (Email/Password) بنفس البريد وكلمة السر.</p>
+<label>اسم المستخدم</label><br><input id="u" placeholder="Ahmedallam"><br><br>
+<label>الإيميل</label><br><input id="e" placeholder="you@example.com"><br><br>
+<label>كلمة المرور</label><br><input id="p" placeholder="••••••••"><br><br>
+<label>الدور</label><br>
+<select id="r">
+  <option value="developer">developer</option>
+  <option value="admin">admin</option>
+  <option value="staff">staff</option>
+</select><br><br>
+<button id="seed">زرع الآن</button>
+</body></html>
